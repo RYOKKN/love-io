@@ -56,6 +56,10 @@
       border-bottom:1px solid rgba(229,223,236,.85);
       padding:10px 0;
     }
+    @supports(padding:max(0px)){
+      .startbar{padding-top:max(10px,env(safe-area-inset-top))}
+      .wrap{padding-bottom:max(80px,env(safe-area-inset-bottom))}
+    }
     .startbar-inner{max-width:920px;margin:0 auto;padding:0 16px;display:flex;gap:12px;align-items:center}
     .progress-wrap{flex:1}
     .progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
@@ -81,10 +85,12 @@
     .section-head h2{margin:0;font-size:23px;line-height:1.2}
     .section-head p{margin:5px 0 0;color:var(--muted);font-size:14px}
     .question{
-      padding:16px 0;border-top:1px solid var(--line)
+      min-width:0;margin:0;padding:16px 0;border:0;border-top:1px solid var(--line)
     }
     .question:first-of-type{border-top:0}
     .qtext{font-weight:700;margin-bottom:12px}
+    legend.qtext{display:block;width:100%;padding:0}
+    .qtext span{color:var(--muted);font-variant-numeric:tabular-nums}
     .choice-row{
       display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:center;margin:9px 0
     }
@@ -95,7 +101,8 @@
     .seg input{position:absolute;opacity:0;pointer-events:none}
     .seg label{
       display:grid;place-items:center;min-height:38px;border:1px solid var(--line);border-radius:12px;
-      background:#fff;font-weight:800;cursor:pointer;user-select:none;transition:.15s
+      background:#fff;font-weight:800;cursor:pointer;user-select:none;-webkit-user-select:none;
+      touch-action:manipulation;transition:.15s
     }
     .seg label:hover{transform:translateY(-1px)}
     .seg input:focus-visible + label{outline:3px solid rgba(111,91,211,.25)}
@@ -139,6 +146,7 @@
     .gap-table{width:100%;border-collapse:collapse;font-size:14px}
     .gap-table th,.gap-table td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:left}
     .gap-table th{color:var(--muted);font-size:12px}
+    .gap-note{margin:14px 0 0;padding:13px 14px;border-radius:14px;background:#f8f5fc;color:#544d5e;font-size:14px}
     .footnote{font-size:12px;color:var(--muted);margin-top:24px}
     .hidden{display:none!important}
     @media(max-width:640px){
@@ -164,7 +172,7 @@
     <div class="startbar-inner">
       <div class="progress-wrap">
         <div class="progress-label"><span>回答進捗</span><span id="progressText">0 / 104</span></div>
-        <div class="progress"><div id="progressBar"></div></div>
+        <div class="progress" role="progressbar" aria-label="回答進捗" aria-valuemin="0" aria-valuemax="104" aria-valuenow="0"><div id="progressBar"></div></div>
       </div>
     </div>
   </div>
@@ -187,7 +195,927 @@
       <p class="privacy">回答と結果は、このブラウザ内だけで計算されます。外部サーバーへ回答内容を送信する仕組みは入れていません。</p>
     </section>
 
-    <form id="quizForm"></form>
+    <form id="quizForm" autocomplete="off">
+    <section class="card question-section" id="words" data-category="words">
+      <div class="section-head">
+        <div class="section-num">1</div>
+        <div><h2>ことば</h2><p>言葉による愛情・承認・安心</p></div>
+      </div>
+      
+      <fieldset class="question" data-question="w1">
+        <legend class="qtext"><span>1.</span> 「好き」「愛してる」など直接的な愛情表現</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w1_r_0" name="w1_r" value="0"><label for="w1_r_0" title="ほぼない">0</label><input type="radio" id="w1_r_1" name="w1_r" value="1"><label for="w1_r_1" title="少し">1</label><input type="radio" id="w1_r_2" name="w1_r" value="2"><label for="w1_r_2" title="かなり">2</label><input type="radio" id="w1_r_3" name="w1_r" value="3"><label for="w1_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w1_s_0" name="w1_s" value="0"><label for="w1_s_0" title="ほぼない">0</label><input type="radio" id="w1_s_1" name="w1_s" value="1"><label for="w1_s_1" title="少し">1</label><input type="radio" id="w1_s_2" name="w1_s" value="2"><label for="w1_s_2" title="かなり">2</label><input type="radio" id="w1_s_3" name="w1_s" value="3"><label for="w1_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w2">
+        <legend class="qtext"><span>2.</span> 「ありがとう」と具体的に感謝を伝える</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w2_r_0" name="w2_r" value="0"><label for="w2_r_0" title="ほぼない">0</label><input type="radio" id="w2_r_1" name="w2_r" value="1"><label for="w2_r_1" title="少し">1</label><input type="radio" id="w2_r_2" name="w2_r" value="2"><label for="w2_r_2" title="かなり">2</label><input type="radio" id="w2_r_3" name="w2_r" value="3"><label for="w2_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w2_s_0" name="w2_s" value="0"><label for="w2_s_0" title="ほぼない">0</label><input type="radio" id="w2_s_1" name="w2_s" value="1"><label for="w2_s_1" title="少し">1</label><input type="radio" id="w2_s_2" name="w2_s" value="2"><label for="w2_s_2" title="かなり">2</label><input type="radio" id="w2_s_3" name="w2_s" value="3"><label for="w2_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w3">
+        <legend class="qtext"><span>3.</span> 容姿・能力・性格などを褒める</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w3_r_0" name="w3_r" value="0"><label for="w3_r_0" title="ほぼない">0</label><input type="radio" id="w3_r_1" name="w3_r" value="1"><label for="w3_r_1" title="少し">1</label><input type="radio" id="w3_r_2" name="w3_r" value="2"><label for="w3_r_2" title="かなり">2</label><input type="radio" id="w3_r_3" name="w3_r" value="3"><label for="w3_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w3_s_0" name="w3_s" value="0"><label for="w3_s_0" title="ほぼない">0</label><input type="radio" id="w3_s_1" name="w3_s" value="1"><label for="w3_s_1" title="少し">1</label><input type="radio" id="w3_s_2" name="w3_s" value="2"><label for="w3_s_2" title="かなり">2</label><input type="radio" id="w3_s_3" name="w3_s" value="3"><label for="w3_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w4">
+        <legend class="qtext"><span>4.</span> 努力や頑張りを認める</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w4_r_0" name="w4_r" value="0"><label for="w4_r_0" title="ほぼない">0</label><input type="radio" id="w4_r_1" name="w4_r" value="1"><label for="w4_r_1" title="少し">1</label><input type="radio" id="w4_r_2" name="w4_r" value="2"><label for="w4_r_2" title="かなり">2</label><input type="radio" id="w4_r_3" name="w4_r" value="3"><label for="w4_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w4_s_0" name="w4_s" value="0"><label for="w4_s_0" title="ほぼない">0</label><input type="radio" id="w4_s_1" name="w4_s" value="1"><label for="w4_s_1" title="少し">1</label><input type="radio" id="w4_s_2" name="w4_s" value="2"><label for="w4_s_2" title="かなり">2</label><input type="radio" id="w4_s_3" name="w4_s" value="3"><label for="w4_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w5">
+        <legend class="qtext"><span>5.</span> 落ち込んだとき励ます・応援する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w5_r_0" name="w5_r" value="0"><label for="w5_r_0" title="ほぼない">0</label><input type="radio" id="w5_r_1" name="w5_r" value="1"><label for="w5_r_1" title="少し">1</label><input type="radio" id="w5_r_2" name="w5_r" value="2"><label for="w5_r_2" title="かなり">2</label><input type="radio" id="w5_r_3" name="w5_r" value="3"><label for="w5_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w5_s_0" name="w5_s" value="0"><label for="w5_s_0" title="ほぼない">0</label><input type="radio" id="w5_s_1" name="w5_s" value="1"><label for="w5_s_1" title="少し">1</label><input type="radio" id="w5_s_2" name="w5_s" value="2"><label for="w5_s_2" title="かなり">2</label><input type="radio" id="w5_s_3" name="w5_s" value="3"><label for="w5_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w6">
+        <legend class="qtext"><span>6.</span> 気持ちを理解していることを言葉にする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w6_r_0" name="w6_r" value="0"><label for="w6_r_0" title="ほぼない">0</label><input type="radio" id="w6_r_1" name="w6_r" value="1"><label for="w6_r_1" title="少し">1</label><input type="radio" id="w6_r_2" name="w6_r" value="2"><label for="w6_r_2" title="かなり">2</label><input type="radio" id="w6_r_3" name="w6_r" value="3"><label for="w6_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w6_s_0" name="w6_s" value="0"><label for="w6_s_0" title="ほぼない">0</label><input type="radio" id="w6_s_1" name="w6_s" value="1"><label for="w6_s_1" title="少し">1</label><input type="radio" id="w6_s_2" name="w6_s" value="2"><label for="w6_s_2" title="かなり">2</label><input type="radio" id="w6_s_3" name="w6_s" value="3"><label for="w6_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w7">
+        <legend class="qtext"><span>7.</span> 「味方だよ」「大丈夫」など安心させる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w7_r_0" name="w7_r" value="0"><label for="w7_r_0" title="ほぼない">0</label><input type="radio" id="w7_r_1" name="w7_r" value="1"><label for="w7_r_1" title="少し">1</label><input type="radio" id="w7_r_2" name="w7_r" value="2"><label for="w7_r_2" title="かなり">2</label><input type="radio" id="w7_r_3" name="w7_r" value="3"><label for="w7_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w7_s_0" name="w7_s" value="0"><label for="w7_s_0" title="ほぼない">0</label><input type="radio" id="w7_s_1" name="w7_s" value="1"><label for="w7_s_1" title="少し">1</label><input type="radio" id="w7_s_2" name="w7_s" value="2"><label for="w7_s_2" title="かなり">2</label><input type="radio" id="w7_s_3" name="w7_s" value="3"><label for="w7_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w8">
+        <legend class="qtext"><span>8.</span> 「これからも一緒にいたい」など関係を言語化する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w8_r_0" name="w8_r" value="0"><label for="w8_r_0" title="ほぼない">0</label><input type="radio" id="w8_r_1" name="w8_r" value="1"><label for="w8_r_1" title="少し">1</label><input type="radio" id="w8_r_2" name="w8_r" value="2"><label for="w8_r_2" title="かなり">2</label><input type="radio" id="w8_r_3" name="w8_r" value="3"><label for="w8_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w8_s_0" name="w8_s" value="0"><label for="w8_s_0" title="ほぼない">0</label><input type="radio" id="w8_s_1" name="w8_s" value="1"><label for="w8_s_1" title="少し">1</label><input type="radio" id="w8_s_2" name="w8_s" value="2"><label for="w8_s_2" title="かなり">2</label><input type="radio" id="w8_s_3" name="w8_s" value="3"><label for="w8_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="w9">
+        <legend class="qtext"><span>9.</span> おはよう・おやすみ・気遣いなど日常的に声をかける</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="w9_r_0" name="w9_r" value="0"><label for="w9_r_0" title="ほぼない">0</label><input type="radio" id="w9_r_1" name="w9_r" value="1"><label for="w9_r_1" title="少し">1</label><input type="radio" id="w9_r_2" name="w9_r" value="2"><label for="w9_r_2" title="かなり">2</label><input type="radio" id="w9_r_3" name="w9_r" value="3"><label for="w9_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="w9_s_0" name="w9_s" value="0"><label for="w9_s_0" title="ほぼない">0</label><input type="radio" id="w9_s_1" name="w9_s" value="1"><label for="w9_s_1" title="少し">1</label><input type="radio" id="w9_s_2" name="w9_s" value="2"><label for="w9_s_2" title="かなり">2</label><input type="radio" id="w9_s_3" name="w9_s" value="3"><label for="w9_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <section class="card question-section" id="qt" data-category="qt">
+      <div class="section-head">
+        <div class="section-num">2</div>
+        <div><h2>共に過ごす時間</h2><p>時間・空間・体験の共有</p></div>
+      </div>
+      
+      <fieldset class="question" data-question="q1">
+        <legend class="qtext"><span>1.</span> 二人でじっくり会話する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q1_r_0" name="q1_r" value="0"><label for="q1_r_0" title="ほぼない">0</label><input type="radio" id="q1_r_1" name="q1_r" value="1"><label for="q1_r_1" title="少し">1</label><input type="radio" id="q1_r_2" name="q1_r" value="2"><label for="q1_r_2" title="かなり">2</label><input type="radio" id="q1_r_3" name="q1_r" value="3"><label for="q1_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q1_s_0" name="q1_s" value="0"><label for="q1_s_0" title="ほぼない">0</label><input type="radio" id="q1_s_1" name="q1_s" value="1"><label for="q1_s_1" title="少し">1</label><input type="radio" id="q1_s_2" name="q1_s" value="2"><label for="q1_s_2" title="かなり">2</label><input type="radio" id="q1_s_3" name="q1_s" value="3"><label for="q1_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q2">
+        <legend class="qtext"><span>2.</span> 自分の話をしっかり聞いてもらう／聞く</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q2_r_0" name="q2_r" value="0"><label for="q2_r_0" title="ほぼない">0</label><input type="radio" id="q2_r_1" name="q2_r" value="1"><label for="q2_r_1" title="少し">1</label><input type="radio" id="q2_r_2" name="q2_r" value="2"><label for="q2_r_2" title="かなり">2</label><input type="radio" id="q2_r_3" name="q2_r" value="3"><label for="q2_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q2_s_0" name="q2_s" value="0"><label for="q2_s_0" title="ほぼない">0</label><input type="radio" id="q2_s_1" name="q2_s" value="1"><label for="q2_s_1" title="少し">1</label><input type="radio" id="q2_s_2" name="q2_s" value="2"><label for="q2_s_2" title="かなり">2</label><input type="radio" id="q2_s_3" name="q2_s" value="3"><label for="q2_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q3">
+        <legend class="qtext"><span>3.</span> スマホなどを置いて相手だけに注意を向ける</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q3_r_0" name="q3_r" value="0"><label for="q3_r_0" title="ほぼない">0</label><input type="radio" id="q3_r_1" name="q3_r" value="1"><label for="q3_r_1" title="少し">1</label><input type="radio" id="q3_r_2" name="q3_r" value="2"><label for="q3_r_2" title="かなり">2</label><input type="radio" id="q3_r_3" name="q3_r" value="3"><label for="q3_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q3_s_0" name="q3_s" value="0"><label for="q3_s_0" title="ほぼない">0</label><input type="radio" id="q3_s_1" name="q3_s" value="1"><label for="q3_s_1" title="少し">1</label><input type="radio" id="q3_s_2" name="q3_s" value="2"><label for="q3_s_2" title="かなり">2</label><input type="radio" id="q3_s_3" name="q3_s" value="3"><label for="q3_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q4">
+        <legend class="qtext"><span>4.</span> 特に何もしなくても同じ空間で過ごす</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q4_r_0" name="q4_r" value="0"><label for="q4_r_0" title="ほぼない">0</label><input type="radio" id="q4_r_1" name="q4_r" value="1"><label for="q4_r_1" title="少し">1</label><input type="radio" id="q4_r_2" name="q4_r" value="2"><label for="q4_r_2" title="かなり">2</label><input type="radio" id="q4_r_3" name="q4_r" value="3"><label for="q4_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q4_s_0" name="q4_s" value="0"><label for="q4_s_0" title="ほぼない">0</label><input type="radio" id="q4_s_1" name="q4_s" value="1"><label for="q4_s_1" title="少し">1</label><input type="radio" id="q4_s_2" name="q4_s" value="2"><label for="q4_s_2" title="かなり">2</label><input type="radio" id="q4_s_3" name="q4_s" value="3"><label for="q4_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q5">
+        <legend class="qtext"><span>5.</span> 一緒に食事をする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q5_r_0" name="q5_r" value="0"><label for="q5_r_0" title="ほぼない">0</label><input type="radio" id="q5_r_1" name="q5_r" value="1"><label for="q5_r_1" title="少し">1</label><input type="radio" id="q5_r_2" name="q5_r" value="2"><label for="q5_r_2" title="かなり">2</label><input type="radio" id="q5_r_3" name="q5_r" value="3"><label for="q5_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q5_s_0" name="q5_s" value="0"><label for="q5_s_0" title="ほぼない">0</label><input type="radio" id="q5_s_1" name="q5_s" value="1"><label for="q5_s_1" title="少し">1</label><input type="radio" id="q5_s_2" name="q5_s" value="2"><label for="q5_s_2" title="かなり">2</label><input type="radio" id="q5_s_3" name="q5_s" value="3"><label for="q5_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q6">
+        <legend class="qtext"><span>6.</span> 買い物・散歩・家事など日常を一緒に過ごす</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q6_r_0" name="q6_r" value="0"><label for="q6_r_0" title="ほぼない">0</label><input type="radio" id="q6_r_1" name="q6_r" value="1"><label for="q6_r_1" title="少し">1</label><input type="radio" id="q6_r_2" name="q6_r" value="2"><label for="q6_r_2" title="かなり">2</label><input type="radio" id="q6_r_3" name="q6_r" value="3"><label for="q6_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q6_s_0" name="q6_s" value="0"><label for="q6_s_0" title="ほぼない">0</label><input type="radio" id="q6_s_1" name="q6_s" value="1"><label for="q6_s_1" title="少し">1</label><input type="radio" id="q6_s_2" name="q6_s" value="2"><label for="q6_s_2" title="かなり">2</label><input type="radio" id="q6_s_3" name="q6_s" value="3"><label for="q6_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q7">
+        <legend class="qtext"><span>7.</span> ゲーム・映画・趣味など同じ活動をする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q7_r_0" name="q7_r" value="0"><label for="q7_r_0" title="ほぼない">0</label><input type="radio" id="q7_r_1" name="q7_r" value="1"><label for="q7_r_1" title="少し">1</label><input type="radio" id="q7_r_2" name="q7_r" value="2"><label for="q7_r_2" title="かなり">2</label><input type="radio" id="q7_r_3" name="q7_r" value="3"><label for="q7_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q7_s_0" name="q7_s" value="0"><label for="q7_s_0" title="ほぼない">0</label><input type="radio" id="q7_s_1" name="q7_s" value="1"><label for="q7_s_1" title="少し">1</label><input type="radio" id="q7_s_2" name="q7_s" value="2"><label for="q7_s_2" title="かなり">2</label><input type="radio" id="q7_s_3" name="q7_s" value="3"><label for="q7_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q8">
+        <legend class="qtext"><span>8.</span> 旅行・イベント・外出など特別な体験を共有する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q8_r_0" name="q8_r" value="0"><label for="q8_r_0" title="ほぼない">0</label><input type="radio" id="q8_r_1" name="q8_r" value="1"><label for="q8_r_1" title="少し">1</label><input type="radio" id="q8_r_2" name="q8_r" value="2"><label for="q8_r_2" title="かなり">2</label><input type="radio" id="q8_r_3" name="q8_r" value="3"><label for="q8_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q8_s_0" name="q8_s" value="0"><label for="q8_s_0" title="ほぼない">0</label><input type="radio" id="q8_s_1" name="q8_s" value="1"><label for="q8_s_1" title="少し">1</label><input type="radio" id="q8_s_2" name="q8_s" value="2"><label for="q8_s_2" title="かなり">2</label><input type="radio" id="q8_s_3" name="q8_s" value="3"><label for="q8_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q9">
+        <legend class="qtext"><span>9.</span> 次の予定や将来のことを一緒に考える</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q9_r_0" name="q9_r" value="0"><label for="q9_r_0" title="ほぼない">0</label><input type="radio" id="q9_r_1" name="q9_r" value="1"><label for="q9_r_1" title="少し">1</label><input type="radio" id="q9_r_2" name="q9_r" value="2"><label for="q9_r_2" title="かなり">2</label><input type="radio" id="q9_r_3" name="q9_r" value="3"><label for="q9_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q9_s_0" name="q9_s" value="0"><label for="q9_s_0" title="ほぼない">0</label><input type="radio" id="q9_s_1" name="q9_s" value="1"><label for="q9_s_1" title="少し">1</label><input type="radio" id="q9_s_2" name="q9_s" value="2"><label for="q9_s_2" title="かなり">2</label><input type="radio" id="q9_s_3" name="q9_s" value="3"><label for="q9_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="q10">
+        <legend class="qtext"><span>10.</span> 定期的に「二人の時間」を確保する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="q10_r_0" name="q10_r" value="0"><label for="q10_r_0" title="ほぼない">0</label><input type="radio" id="q10_r_1" name="q10_r" value="1"><label for="q10_r_1" title="少し">1</label><input type="radio" id="q10_r_2" name="q10_r" value="2"><label for="q10_r_2" title="かなり">2</label><input type="radio" id="q10_r_3" name="q10_r" value="3"><label for="q10_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="q10_s_0" name="q10_s" value="0"><label for="q10_s_0" title="ほぼない">0</label><input type="radio" id="q10_s_1" name="q10_s" value="1"><label for="q10_s_1" title="少し">1</label><input type="radio" id="q10_s_2" name="q10_s" value="2"><label for="q10_s_2" title="かなり">2</label><input type="radio" id="q10_s_3" name="q10_s" value="3"><label for="q10_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <section class="card question-section" id="gift" data-category="gift">
+      <div class="section-head">
+        <div class="section-num">3</div>
+        <div><h2>贈り物・象徴</h2><p>物や記号に込められた「思い出した」の証拠</p></div>
+      </div>
+      
+      <fieldset class="question" data-question="g1">
+        <legend class="qtext"><span>1.</span> 誕生日・記念日にプレゼントをする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g1_r_0" name="g1_r" value="0"><label for="g1_r_0" title="ほぼない">0</label><input type="radio" id="g1_r_1" name="g1_r" value="1"><label for="g1_r_1" title="少し">1</label><input type="radio" id="g1_r_2" name="g1_r" value="2"><label for="g1_r_2" title="かなり">2</label><input type="radio" id="g1_r_3" name="g1_r" value="3"><label for="g1_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g1_s_0" name="g1_s" value="0"><label for="g1_s_0" title="ほぼない">0</label><input type="radio" id="g1_s_1" name="g1_s" value="1"><label for="g1_s_1" title="少し">1</label><input type="radio" id="g1_s_2" name="g1_s" value="2"><label for="g1_s_2" title="かなり">2</label><input type="radio" id="g1_s_3" name="g1_s" value="3"><label for="g1_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g2">
+        <legend class="qtext"><span>2.</span> 何でもない日に小さな物を渡す</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g2_r_0" name="g2_r" value="0"><label for="g2_r_0" title="ほぼない">0</label><input type="radio" id="g2_r_1" name="g2_r" value="1"><label for="g2_r_1" title="少し">1</label><input type="radio" id="g2_r_2" name="g2_r" value="2"><label for="g2_r_2" title="かなり">2</label><input type="radio" id="g2_r_3" name="g2_r" value="3"><label for="g2_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g2_s_0" name="g2_s" value="0"><label for="g2_s_0" title="ほぼない">0</label><input type="radio" id="g2_s_1" name="g2_s" value="1"><label for="g2_s_1" title="少し">1</label><input type="radio" id="g2_s_2" name="g2_s" value="2"><label for="g2_s_2" title="かなり">2</label><input type="radio" id="g2_s_3" name="g2_s" value="3"><label for="g2_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g3">
+        <legend class="qtext"><span>3.</span> 出先で相手を思い出してお土産を買う</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g3_r_0" name="g3_r" value="0"><label for="g3_r_0" title="ほぼない">0</label><input type="radio" id="g3_r_1" name="g3_r" value="1"><label for="g3_r_1" title="少し">1</label><input type="radio" id="g3_r_2" name="g3_r" value="2"><label for="g3_r_2" title="かなり">2</label><input type="radio" id="g3_r_3" name="g3_r" value="3"><label for="g3_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g3_s_0" name="g3_s" value="0"><label for="g3_s_0" title="ほぼない">0</label><input type="radio" id="g3_s_1" name="g3_s" value="1"><label for="g3_s_1" title="少し">1</label><input type="radio" id="g3_s_2" name="g3_s" value="2"><label for="g3_s_2" title="かなり">2</label><input type="radio" id="g3_s_3" name="g3_s" value="3"><label for="g3_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g4">
+        <legend class="qtext"><span>4.</span> 相手の好みを覚えていて、それに合う物を選ぶ</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g4_r_0" name="g4_r" value="0"><label for="g4_r_0" title="ほぼない">0</label><input type="radio" id="g4_r_1" name="g4_r" value="1"><label for="g4_r_1" title="少し">1</label><input type="radio" id="g4_r_2" name="g4_r" value="2"><label for="g4_r_2" title="かなり">2</label><input type="radio" id="g4_r_3" name="g4_r" value="3"><label for="g4_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g4_s_0" name="g4_s" value="0"><label for="g4_s_0" title="ほぼない">0</label><input type="radio" id="g4_s_1" name="g4_s" value="1"><label for="g4_s_1" title="少し">1</label><input type="radio" id="g4_s_2" name="g4_s" value="2"><label for="g4_s_2" title="かなり">2</label><input type="radio" id="g4_s_3" name="g4_s" value="3"><label for="g4_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g5">
+        <legend class="qtext"><span>5.</span> 「これ好きって言ってたよね」と選ぶ</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g5_r_0" name="g5_r" value="0"><label for="g5_r_0" title="ほぼない">0</label><input type="radio" id="g5_r_1" name="g5_r" value="1"><label for="g5_r_1" title="少し">1</label><input type="radio" id="g5_r_2" name="g5_r" value="2"><label for="g5_r_2" title="かなり">2</label><input type="radio" id="g5_r_3" name="g5_r" value="3"><label for="g5_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g5_s_0" name="g5_s" value="0"><label for="g5_s_0" title="ほぼない">0</label><input type="radio" id="g5_s_1" name="g5_s" value="1"><label for="g5_s_1" title="少し">1</label><input type="radio" id="g5_s_2" name="g5_s" value="2"><label for="g5_s_2" title="かなり">2</label><input type="radio" id="g5_s_3" name="g5_s" value="3"><label for="g5_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g6">
+        <legend class="qtext"><span>6.</span> 手作りの物を渡す</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g6_r_0" name="g6_r" value="0"><label for="g6_r_0" title="ほぼない">0</label><input type="radio" id="g6_r_1" name="g6_r" value="1"><label for="g6_r_1" title="少し">1</label><input type="radio" id="g6_r_2" name="g6_r" value="2"><label for="g6_r_2" title="かなり">2</label><input type="radio" id="g6_r_3" name="g6_r" value="3"><label for="g6_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g6_s_0" name="g6_s" value="0"><label for="g6_s_0" title="ほぼない">0</label><input type="radio" id="g6_s_1" name="g6_s" value="1"><label for="g6_s_1" title="少し">1</label><input type="radio" id="g6_s_2" name="g6_s" value="2"><label for="g6_s_2" title="かなり">2</label><input type="radio" id="g6_s_3" name="g6_s" value="3"><label for="g6_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g7">
+        <legend class="qtext"><span>7.</span> 二人の思い出に関係する物を残す・贈る</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g7_r_0" name="g7_r" value="0"><label for="g7_r_0" title="ほぼない">0</label><input type="radio" id="g7_r_1" name="g7_r" value="1"><label for="g7_r_1" title="少し">1</label><input type="radio" id="g7_r_2" name="g7_r" value="2"><label for="g7_r_2" title="かなり">2</label><input type="radio" id="g7_r_3" name="g7_r" value="3"><label for="g7_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g7_s_0" name="g7_s" value="0"><label for="g7_s_0" title="ほぼない">0</label><input type="radio" id="g7_s_1" name="g7_s" value="1"><label for="g7_s_1" title="少し">1</label><input type="radio" id="g7_s_2" name="g7_s" value="2"><label for="g7_s_2" title="かなり">2</label><input type="radio" id="g7_s_3" name="g7_s" value="3"><label for="g7_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g8">
+        <legend class="qtext"><span>8.</span> 必要そうな実用品を買ってあげる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g8_r_0" name="g8_r" value="0"><label for="g8_r_0" title="ほぼない">0</label><input type="radio" id="g8_r_1" name="g8_r" value="1"><label for="g8_r_1" title="少し">1</label><input type="radio" id="g8_r_2" name="g8_r" value="2"><label for="g8_r_2" title="かなり">2</label><input type="radio" id="g8_r_3" name="g8_r" value="3"><label for="g8_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g8_s_0" name="g8_s" value="0"><label for="g8_s_0" title="ほぼない">0</label><input type="radio" id="g8_s_1" name="g8_s" value="1"><label for="g8_s_1" title="少し">1</label><input type="radio" id="g8_s_2" name="g8_s" value="2"><label for="g8_s_2" title="かなり">2</label><input type="radio" id="g8_s_3" name="g8_s" value="3"><label for="g8_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="g9">
+        <legend class="qtext"><span>9.</span> 金額より「自分を思い出してくれたこと」に価値を感じる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="g9_r_0" name="g9_r" value="0"><label for="g9_r_0" title="ほぼない">0</label><input type="radio" id="g9_r_1" name="g9_r" value="1"><label for="g9_r_1" title="少し">1</label><input type="radio" id="g9_r_2" name="g9_r" value="2"><label for="g9_r_2" title="かなり">2</label><input type="radio" id="g9_r_3" name="g9_r" value="3"><label for="g9_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="g9_s_0" name="g9_s" value="0"><label for="g9_s_0" title="ほぼない">0</label><input type="radio" id="g9_s_1" name="g9_s" value="1"><label for="g9_s_1" title="少し">1</label><input type="radio" id="g9_s_2" name="g9_s" value="2"><label for="g9_s_2" title="かなり">2</label><input type="radio" id="g9_s_3" name="g9_s" value="3"><label for="g9_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <section class="card question-section" id="service" data-category="service">
+      <div class="section-head">
+        <div class="section-num">4</div>
+        <div><h2>行動・サポート</h2><p>相手の負担を減らす実務的な愛情</p></div>
+      </div>
+      
+      <fieldset class="question" data-question="s1">
+        <legend class="qtext"><span>1.</span> 食事を作る</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s1_r_0" name="s1_r" value="0"><label for="s1_r_0" title="ほぼない">0</label><input type="radio" id="s1_r_1" name="s1_r" value="1"><label for="s1_r_1" title="少し">1</label><input type="radio" id="s1_r_2" name="s1_r" value="2"><label for="s1_r_2" title="かなり">2</label><input type="radio" id="s1_r_3" name="s1_r" value="3"><label for="s1_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s1_s_0" name="s1_s" value="0"><label for="s1_s_0" title="ほぼない">0</label><input type="radio" id="s1_s_1" name="s1_s" value="1"><label for="s1_s_1" title="少し">1</label><input type="radio" id="s1_s_2" name="s1_s" value="2"><label for="s1_s_2" title="かなり">2</label><input type="radio" id="s1_s_3" name="s1_s" value="3"><label for="s1_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s2">
+        <legend class="qtext"><span>2.</span> 掃除・洗濯など家事をする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s2_r_0" name="s2_r" value="0"><label for="s2_r_0" title="ほぼない">0</label><input type="radio" id="s2_r_1" name="s2_r" value="1"><label for="s2_r_1" title="少し">1</label><input type="radio" id="s2_r_2" name="s2_r" value="2"><label for="s2_r_2" title="かなり">2</label><input type="radio" id="s2_r_3" name="s2_r" value="3"><label for="s2_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s2_s_0" name="s2_s" value="0"><label for="s2_s_0" title="ほぼない">0</label><input type="radio" id="s2_s_1" name="s2_s" value="1"><label for="s2_s_1" title="少し">1</label><input type="radio" id="s2_s_2" name="s2_s" value="2"><label for="s2_s_2" title="かなり">2</label><input type="radio" id="s2_s_3" name="s2_s" value="3"><label for="s2_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s3">
+        <legend class="qtext"><span>3.</span> 買い物や用事を代わりに済ませる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s3_r_0" name="s3_r" value="0"><label for="s3_r_0" title="ほぼない">0</label><input type="radio" id="s3_r_1" name="s3_r" value="1"><label for="s3_r_1" title="少し">1</label><input type="radio" id="s3_r_2" name="s3_r" value="2"><label for="s3_r_2" title="かなり">2</label><input type="radio" id="s3_r_3" name="s3_r" value="3"><label for="s3_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s3_s_0" name="s3_s" value="0"><label for="s3_s_0" title="ほぼない">0</label><input type="radio" id="s3_s_1" name="s3_s" value="1"><label for="s3_s_1" title="少し">1</label><input type="radio" id="s3_s_2" name="s3_s" value="2"><label for="s3_s_2" title="かなり">2</label><input type="radio" id="s3_s_3" name="s3_s" value="3"><label for="s3_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s4">
+        <legend class="qtext"><span>4.</span> 車で送迎する・迎えに行く</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s4_r_0" name="s4_r" value="0"><label for="s4_r_0" title="ほぼない">0</label><input type="radio" id="s4_r_1" name="s4_r" value="1"><label for="s4_r_1" title="少し">1</label><input type="radio" id="s4_r_2" name="s4_r" value="2"><label for="s4_r_2" title="かなり">2</label><input type="radio" id="s4_r_3" name="s4_r" value="3"><label for="s4_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s4_s_0" name="s4_s" value="0"><label for="s4_s_0" title="ほぼない">0</label><input type="radio" id="s4_s_1" name="s4_s" value="1"><label for="s4_s_1" title="少し">1</label><input type="radio" id="s4_s_2" name="s4_s" value="2"><label for="s4_s_2" title="かなり">2</label><input type="radio" id="s4_s_3" name="s4_s" value="3"><label for="s4_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s5">
+        <legend class="qtext"><span>5.</span> 面倒な手続きや調べ物を手伝う</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s5_r_0" name="s5_r" value="0"><label for="s5_r_0" title="ほぼない">0</label><input type="radio" id="s5_r_1" name="s5_r" value="1"><label for="s5_r_1" title="少し">1</label><input type="radio" id="s5_r_2" name="s5_r" value="2"><label for="s5_r_2" title="かなり">2</label><input type="radio" id="s5_r_3" name="s5_r" value="3"><label for="s5_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s5_s_0" name="s5_s" value="0"><label for="s5_s_0" title="ほぼない">0</label><input type="radio" id="s5_s_1" name="s5_s" value="1"><label for="s5_s_1" title="少し">1</label><input type="radio" id="s5_s_2" name="s5_s" value="2"><label for="s5_s_2" title="かなり">2</label><input type="radio" id="s5_s_3" name="s5_s" value="3"><label for="s5_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s6">
+        <legend class="qtext"><span>6.</span> 壊れた物・困り事などを解決する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s6_r_0" name="s6_r" value="0"><label for="s6_r_0" title="ほぼない">0</label><input type="radio" id="s6_r_1" name="s6_r" value="1"><label for="s6_r_1" title="少し">1</label><input type="radio" id="s6_r_2" name="s6_r" value="2"><label for="s6_r_2" title="かなり">2</label><input type="radio" id="s6_r_3" name="s6_r" value="3"><label for="s6_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s6_s_0" name="s6_s" value="0"><label for="s6_s_0" title="ほぼない">0</label><input type="radio" id="s6_s_1" name="s6_s" value="1"><label for="s6_s_1" title="少し">1</label><input type="radio" id="s6_s_2" name="s6_s" value="2"><label for="s6_s_2" title="かなり">2</label><input type="radio" id="s6_s_3" name="s6_s" value="3"><label for="s6_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s7">
+        <legend class="qtext"><span>7.</span> 忙しいとき相手の負担を肩代わりする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s7_r_0" name="s7_r" value="0"><label for="s7_r_0" title="ほぼない">0</label><input type="radio" id="s7_r_1" name="s7_r" value="1"><label for="s7_r_1" title="少し">1</label><input type="radio" id="s7_r_2" name="s7_r" value="2"><label for="s7_r_2" title="かなり">2</label><input type="radio" id="s7_r_3" name="s7_r" value="3"><label for="s7_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s7_s_0" name="s7_s" value="0"><label for="s7_s_0" title="ほぼない">0</label><input type="radio" id="s7_s_1" name="s7_s" value="1"><label for="s7_s_1" title="少し">1</label><input type="radio" id="s7_s_2" name="s7_s" value="2"><label for="s7_s_2" title="かなり">2</label><input type="radio" id="s7_s_3" name="s7_s" value="3"><label for="s7_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s8">
+        <legend class="qtext"><span>8.</span> 体調が悪いとき世話をする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s8_r_0" name="s8_r" value="0"><label for="s8_r_0" title="ほぼない">0</label><input type="radio" id="s8_r_1" name="s8_r" value="1"><label for="s8_r_1" title="少し">1</label><input type="radio" id="s8_r_2" name="s8_r" value="2"><label for="s8_r_2" title="かなり">2</label><input type="radio" id="s8_r_3" name="s8_r" value="3"><label for="s8_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s8_s_0" name="s8_s" value="0"><label for="s8_s_0" title="ほぼない">0</label><input type="radio" id="s8_s_1" name="s8_s" value="1"><label for="s8_s_1" title="少し">1</label><input type="radio" id="s8_s_2" name="s8_s" value="2"><label for="s8_s_2" title="かなり">2</label><input type="radio" id="s8_s_3" name="s8_s" value="3"><label for="s8_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s9">
+        <legend class="qtext"><span>9.</span> 予定・旅行・生活の段取りをする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s9_r_0" name="s9_r" value="0"><label for="s9_r_0" title="ほぼない">0</label><input type="radio" id="s9_r_1" name="s9_r" value="1"><label for="s9_r_1" title="少し">1</label><input type="radio" id="s9_r_2" name="s9_r" value="2"><label for="s9_r_2" title="かなり">2</label><input type="radio" id="s9_r_3" name="s9_r" value="3"><label for="s9_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s9_s_0" name="s9_s" value="0"><label for="s9_s_0" title="ほぼない">0</label><input type="radio" id="s9_s_1" name="s9_s" value="1"><label for="s9_s_1" title="少し">1</label><input type="radio" id="s9_s_2" name="s9_s" value="2"><label for="s9_s_2" title="かなり">2</label><input type="radio" id="s9_s_3" name="s9_s" value="3"><label for="s9_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s10">
+        <legend class="qtext"><span>10.</span> 頼まれる前に必要なことを察して行動する</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s10_r_0" name="s10_r" value="0"><label for="s10_r_0" title="ほぼない">0</label><input type="radio" id="s10_r_1" name="s10_r" value="1"><label for="s10_r_1" title="少し">1</label><input type="radio" id="s10_r_2" name="s10_r" value="2"><label for="s10_r_2" title="かなり">2</label><input type="radio" id="s10_r_3" name="s10_r" value="3"><label for="s10_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s10_s_0" name="s10_s" value="0"><label for="s10_s_0" title="ほぼない">0</label><input type="radio" id="s10_s_1" name="s10_s" value="1"><label for="s10_s_1" title="少し">1</label><input type="radio" id="s10_s_2" name="s10_s" value="2"><label for="s10_s_2" title="かなり">2</label><input type="radio" id="s10_s_3" name="s10_s" value="3"><label for="s10_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="s11">
+        <legend class="qtext"><span>11.</span> 相手が楽になるよう環境を整える</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="s11_r_0" name="s11_r" value="0"><label for="s11_r_0" title="ほぼない">0</label><input type="radio" id="s11_r_1" name="s11_r" value="1"><label for="s11_r_1" title="少し">1</label><input type="radio" id="s11_r_2" name="s11_r" value="2"><label for="s11_r_2" title="かなり">2</label><input type="radio" id="s11_r_3" name="s11_r" value="3"><label for="s11_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="s11_s_0" name="s11_s" value="0"><label for="s11_s_0" title="ほぼない">0</label><input type="radio" id="s11_s_1" name="s11_s" value="1"><label for="s11_s_1" title="少し">1</label><input type="radio" id="s11_s_2" name="s11_s" value="2"><label for="s11_s_2" title="かなり">2</label><input type="radio" id="s11_s_3" name="s11_s" value="3"><label for="s11_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    <section class="card question-section" id="touch" data-category="touch">
+      <div class="section-head">
+        <div class="section-num">5</div>
+        <div><h2>身体的な触れ合い</h2><p>身体接触による安心・親密さ・性的なつながり</p></div>
+      </div>
+      
+      <fieldset class="question" data-question="t1">
+        <legend class="qtext"><span>1.</span> ハグする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t1_r_0" name="t1_r" value="0"><label for="t1_r_0" title="ほぼない">0</label><input type="radio" id="t1_r_1" name="t1_r" value="1"><label for="t1_r_1" title="少し">1</label><input type="radio" id="t1_r_2" name="t1_r" value="2"><label for="t1_r_2" title="かなり">2</label><input type="radio" id="t1_r_3" name="t1_r" value="3"><label for="t1_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t1_s_0" name="t1_s" value="0"><label for="t1_s_0" title="ほぼない">0</label><input type="radio" id="t1_s_1" name="t1_s" value="1"><label for="t1_s_1" title="少し">1</label><input type="radio" id="t1_s_2" name="t1_s" value="2"><label for="t1_s_2" title="かなり">2</label><input type="radio" id="t1_s_3" name="t1_s" value="3"><label for="t1_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t2">
+        <legend class="qtext"><span>2.</span> 手をつなぐ</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t2_r_0" name="t2_r" value="0"><label for="t2_r_0" title="ほぼない">0</label><input type="radio" id="t2_r_1" name="t2_r" value="1"><label for="t2_r_1" title="少し">1</label><input type="radio" id="t2_r_2" name="t2_r" value="2"><label for="t2_r_2" title="かなり">2</label><input type="radio" id="t2_r_3" name="t2_r" value="3"><label for="t2_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t2_s_0" name="t2_s" value="0"><label for="t2_s_0" title="ほぼない">0</label><input type="radio" id="t2_s_1" name="t2_s" value="1"><label for="t2_s_1" title="少し">1</label><input type="radio" id="t2_s_2" name="t2_s" value="2"><label for="t2_s_2" title="かなり">2</label><input type="radio" id="t2_s_3" name="t2_s" value="3"><label for="t2_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t3">
+        <legend class="qtext"><span>3.</span> キスする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t3_r_0" name="t3_r" value="0"><label for="t3_r_0" title="ほぼない">0</label><input type="radio" id="t3_r_1" name="t3_r" value="1"><label for="t3_r_1" title="少し">1</label><input type="radio" id="t3_r_2" name="t3_r" value="2"><label for="t3_r_2" title="かなり">2</label><input type="radio" id="t3_r_3" name="t3_r" value="3"><label for="t3_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t3_s_0" name="t3_s" value="0"><label for="t3_s_0" title="ほぼない">0</label><input type="radio" id="t3_s_1" name="t3_s" value="1"><label for="t3_s_1" title="少し">1</label><input type="radio" id="t3_s_2" name="t3_s" value="2"><label for="t3_s_2" title="かなり">2</label><input type="radio" id="t3_s_3" name="t3_s" value="3"><label for="t3_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t4">
+        <legend class="qtext"><span>4.</span> 肩・背中・腕などに軽く触れる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t4_r_0" name="t4_r" value="0"><label for="t4_r_0" title="ほぼない">0</label><input type="radio" id="t4_r_1" name="t4_r" value="1"><label for="t4_r_1" title="少し">1</label><input type="radio" id="t4_r_2" name="t4_r" value="2"><label for="t4_r_2" title="かなり">2</label><input type="radio" id="t4_r_3" name="t4_r" value="3"><label for="t4_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t4_s_0" name="t4_s" value="0"><label for="t4_s_0" title="ほぼない">0</label><input type="radio" id="t4_s_1" name="t4_s" value="1"><label for="t4_s_1" title="少し">1</label><input type="radio" id="t4_s_2" name="t4_s" value="2"><label for="t4_s_2" title="かなり">2</label><input type="radio" id="t4_s_3" name="t4_s" value="3"><label for="t4_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t5">
+        <legend class="qtext"><span>5.</span> 隣で身体を寄せて座る</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t5_r_0" name="t5_r" value="0"><label for="t5_r_0" title="ほぼない">0</label><input type="radio" id="t5_r_1" name="t5_r" value="1"><label for="t5_r_1" title="少し">1</label><input type="radio" id="t5_r_2" name="t5_r" value="2"><label for="t5_r_2" title="かなり">2</label><input type="radio" id="t5_r_3" name="t5_r" value="3"><label for="t5_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t5_s_0" name="t5_s" value="0"><label for="t5_s_0" title="ほぼない">0</label><input type="radio" id="t5_s_1" name="t5_s" value="1"><label for="t5_s_1" title="少し">1</label><input type="radio" id="t5_s_2" name="t5_s" value="2"><label for="t5_s_2" title="かなり">2</label><input type="radio" id="t5_s_3" name="t5_s" value="3"><label for="t5_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t6">
+        <legend class="qtext"><span>6.</span> 添い寝・一緒の布団で眠る</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t6_r_0" name="t6_r" value="0"><label for="t6_r_0" title="ほぼない">0</label><input type="radio" id="t6_r_1" name="t6_r" value="1"><label for="t6_r_1" title="少し">1</label><input type="radio" id="t6_r_2" name="t6_r" value="2"><label for="t6_r_2" title="かなり">2</label><input type="radio" id="t6_r_3" name="t6_r" value="3"><label for="t6_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t6_s_0" name="t6_s" value="0"><label for="t6_s_0" title="ほぼない">0</label><input type="radio" id="t6_s_1" name="t6_s" value="1"><label for="t6_s_1" title="少し">1</label><input type="radio" id="t6_s_2" name="t6_s" value="2"><label for="t6_s_2" title="かなり">2</label><input type="radio" id="t6_s_3" name="t6_s" value="3"><label for="t6_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t7">
+        <legend class="qtext"><span>7.</span> 頭を撫でる・髪に触れる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t7_r_0" name="t7_r" value="0"><label for="t7_r_0" title="ほぼない">0</label><input type="radio" id="t7_r_1" name="t7_r" value="1"><label for="t7_r_1" title="少し">1</label><input type="radio" id="t7_r_2" name="t7_r" value="2"><label for="t7_r_2" title="かなり">2</label><input type="radio" id="t7_r_3" name="t7_r" value="3"><label for="t7_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t7_s_0" name="t7_s" value="0"><label for="t7_s_0" title="ほぼない">0</label><input type="radio" id="t7_s_1" name="t7_s" value="1"><label for="t7_s_1" title="少し">1</label><input type="radio" id="t7_s_2" name="t7_s" value="2"><label for="t7_s_2" title="かなり">2</label><input type="radio" id="t7_s_3" name="t7_s" value="3"><label for="t7_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t8">
+        <legend class="qtext"><span>8.</span> マッサージなど長めの身体接触</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t8_r_0" name="t8_r" value="0"><label for="t8_r_0" title="ほぼない">0</label><input type="radio" id="t8_r_1" name="t8_r" value="1"><label for="t8_r_1" title="少し">1</label><input type="radio" id="t8_r_2" name="t8_r" value="2"><label for="t8_r_2" title="かなり">2</label><input type="radio" id="t8_r_3" name="t8_r" value="3"><label for="t8_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t8_s_0" name="t8_s" value="0"><label for="t8_s_0" title="ほぼない">0</label><input type="radio" id="t8_s_1" name="t8_s" value="1"><label for="t8_s_1" title="少し">1</label><input type="radio" id="t8_s_2" name="t8_s" value="2"><label for="t8_s_2" title="かなり">2</label><input type="radio" id="t8_s_3" name="t8_s" value="3"><label for="t8_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t9">
+        <legend class="qtext"><span>9.</span> すれ違いざまなど日常的に軽く触れる</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t9_r_0" name="t9_r" value="0"><label for="t9_r_0" title="ほぼない">0</label><input type="radio" id="t9_r_1" name="t9_r" value="1"><label for="t9_r_1" title="少し">1</label><input type="radio" id="t9_r_2" name="t9_r" value="2"><label for="t9_r_2" title="かなり">2</label><input type="radio" id="t9_r_3" name="t9_r" value="3"><label for="t9_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t9_s_0" name="t9_s" value="0"><label for="t9_s_0" title="ほぼない">0</label><input type="radio" id="t9_s_1" name="t9_s" value="1"><label for="t9_s_1" title="少し">1</label><input type="radio" id="t9_s_2" name="t9_s" value="2"><label for="t9_s_2" title="かなり">2</label><input type="radio" id="t9_s_3" name="t9_s" value="3"><label for="t9_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t10">
+        <legend class="qtext"><span>10.</span> 性的ではない濃密なスキンシップ</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t10_r_0" name="t10_r" value="0"><label for="t10_r_0" title="ほぼない">0</label><input type="radio" id="t10_r_1" name="t10_r" value="1"><label for="t10_r_1" title="少し">1</label><input type="radio" id="t10_r_2" name="t10_r" value="2"><label for="t10_r_2" title="かなり">2</label><input type="radio" id="t10_r_3" name="t10_r" value="3"><label for="t10_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t10_s_0" name="t10_s" value="0"><label for="t10_s_0" title="ほぼない">0</label><input type="radio" id="t10_s_1" name="t10_s" value="1"><label for="t10_s_1" title="少し">1</label><input type="radio" id="t10_s_2" name="t10_s" value="2"><label for="t10_s_2" title="かなり">2</label><input type="radio" id="t10_s_3" name="t10_s" value="3"><label for="t10_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t11">
+        <legend class="qtext"><span>11.</span> 性的な触れ合い</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t11_r_0" name="t11_r" value="0"><label for="t11_r_0" title="ほぼない">0</label><input type="radio" id="t11_r_1" name="t11_r" value="1"><label for="t11_r_1" title="少し">1</label><input type="radio" id="t11_r_2" name="t11_r" value="2"><label for="t11_r_2" title="かなり">2</label><input type="radio" id="t11_r_3" name="t11_r" value="3"><label for="t11_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t11_s_0" name="t11_s" value="0"><label for="t11_s_0" title="ほぼない">0</label><input type="radio" id="t11_s_1" name="t11_s" value="1"><label for="t11_s_1" title="少し">1</label><input type="radio" id="t11_s_2" name="t11_s" value="2"><label for="t11_s_2" title="かなり">2</label><input type="radio" id="t11_s_3" name="t11_s" value="3"><label for="t11_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t12">
+        <legend class="qtext"><span>12.</span> セックス</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t12_r_0" name="t12_r" value="0"><label for="t12_r_0" title="ほぼない">0</label><input type="radio" id="t12_r_1" name="t12_r" value="1"><label for="t12_r_1" title="少し">1</label><input type="radio" id="t12_r_2" name="t12_r" value="2"><label for="t12_r_2" title="かなり">2</label><input type="radio" id="t12_r_3" name="t12_r" value="3"><label for="t12_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t12_s_0" name="t12_s" value="0"><label for="t12_s_0" title="ほぼない">0</label><input type="radio" id="t12_s_1" name="t12_s" value="1"><label for="t12_s_1" title="少し">1</label><input type="radio" id="t12_s_2" name="t12_s" value="2"><label for="t12_s_2" title="かなり">2</label><input type="radio" id="t12_s_3" name="t12_s" value="3"><label for="t12_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+      <fieldset class="question" data-question="t13">
+        <legend class="qtext"><span>13.</span> 人前でも手をつなぐなどPDAをする</legend>
+        
+        <div class="choice-row">
+          <div class="choice-label receive">受信 R</div>
+          <div class="seg receive" role="radiogroup" aria-label="受信 Rの強さ">
+            <input type="radio" id="t13_r_0" name="t13_r" value="0"><label for="t13_r_0" title="ほぼない">0</label><input type="radio" id="t13_r_1" name="t13_r" value="1"><label for="t13_r_1" title="少し">1</label><input type="radio" id="t13_r_2" name="t13_r" value="2"><label for="t13_r_2" title="かなり">2</label><input type="radio" id="t13_r_3" name="t13_r" value="3"><label for="t13_r_3" title="とても強い">3</label>
+          </div>
+        </div>
+        
+        <div class="choice-row">
+          <div class="choice-label send">送信 S</div>
+          <div class="seg send" role="radiogroup" aria-label="送信 Sの強さ">
+            <input type="radio" id="t13_s_0" name="t13_s" value="0"><label for="t13_s_0" title="ほぼない">0</label><input type="radio" id="t13_s_1" name="t13_s" value="1"><label for="t13_s_1" title="少し">1</label><input type="radio" id="t13_s_2" name="t13_s" value="2"><label for="t13_s_2" title="かなり">2</label><input type="radio" id="t13_s_3" name="t13_s" value="3"><label for="t13_s_3" title="とても強い">3</label>
+          </div>
+        </div>
+      </fieldset>
+    </section>
+    </form>
 
     <div id="warning" class="warn">未回答の項目があります。受信・送信の両方をすべて選んでください。</div>
 
@@ -247,6 +1175,7 @@
             <thead><tr><th>領域</th><th>受信</th><th>送信</th><th>差</th></tr></thead>
             <tbody id="gapRows"></tbody>
           </table>
+          <p class="gap-note" id="gapNote"></p>
         </div>
       </section>
 
@@ -364,44 +1293,6 @@ const categories = [
 const form = document.getElementById("quizForm");
 const totalChoices = categories.reduce((n,c)=>n+c.items.length*2,0);
 
-function renderQuiz(){
-  form.innerHTML = categories.map((cat,ci)=>`
-    <section class="card" id="${cat.id}">
-      <div class="section-head">
-        <div class="section-num">${ci+1}</div>
-        <div><h2>${cat.name}</h2><p>${cat.desc}</p></div>
-      </div>
-      ${cat.items.map((it,ii)=>questionHTML(it,ii)).join("")}
-    </section>
-  `).join("");
-  restoreAnswers();
-  updateProgress();
-}
-
-function questionHTML(it,ii){
-  const [id,text] = it;
-  return `
-    <div class="question">
-      <div class="qtext">${ii+1}. ${text}</div>
-      ${choiceRow(id,"r","受信","receive")}
-      ${choiceRow(id,"s","送信","send")}
-    </div>
-  `;
-}
-function choiceRow(id,mode,label,cls){
-  return `
-    <div class="choice-row">
-      <div class="choice-label ${cls}">${label}</div>
-      <div class="seg ${cls}">
-        ${[0,1,2,3].map(v=>`
-          <input type="radio" id="${id}_${mode}_${v}" name="${id}_${mode}" value="${v}">
-          <label for="${id}_${mode}_${v}">${v}</label>
-        `).join("")}
-      </div>
-    </div>
-  `;
-}
-
 function allNames(){
   const names=[];
   categories.forEach(c=>c.items.forEach(([id])=>{names.push(id+"_r",id+"_s")}));
@@ -419,10 +1310,11 @@ function updateProgress(){
   const count=Object.keys(answerMap()).length;
   document.getElementById("progressText").textContent=`${count} / ${totalChoices}`;
   document.getElementById("progressBar").style.width=`${(count/totalChoices)*100}%`;
+  document.querySelector('[role="progressbar"]').setAttribute("aria-valuenow",String(count));
 }
 form.addEventListener("change",()=>{
   const data=answerMap();
-  localStorage.setItem("loveio_answers",JSON.stringify(data));
+  try{ localStorage.setItem("loveio_answers",JSON.stringify(data)); }catch(e){}
   updateProgress();
 });
 
@@ -488,7 +1380,7 @@ function renderResults(data){
   document.getElementById("resultTitle").textContent =
     `受信は「${rt.name}」寄り、送信は「${st.name}」寄り`;
   document.getElementById("resultSummary").textContent =
-    `あなたは、${recvPhrase[rt.id]}一方で、自分からは${sendPhrase[st.id]}傾向が強めです。細分類では受信「${rs[0].name}」、送信「${ss[0].name}」が特に高く出ています。`;
+    `あなたは、${recvPhrase[rt.id]}傾向があります。一方、自分からは${sendPhrase[st.id]}傾向が強めです。細分類では、受信の「${rs[0].name}」と送信の「${ss[0].name}」が特に高く出ています。`;
 
   document.getElementById("receiveBars").innerHTML=barsHTML(r,"receive");
   document.getElementById("sendBars").innerHTML=barsHTML(s,"send");
@@ -504,15 +1396,22 @@ function renderResults(data){
   }).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
 
   document.getElementById("gapRows").innerHTML=merged.map(x=>`
-    <tr><td>${x.name}</td><td>${x.r}%</td><td>${x.s}%</td><td>${x.d>0?"+":""}${x.d}</td></tr>
+    <tr><td>${x.name}</td><td>${x.r}%</td><td>${x.s}%</td><td>${x.d>0?"+":""}${x.d} pt</td></tr>
   `).join("");
 
-  window.__loveioResult={r,s,rt,st,rs,ss};
+  const gap=merged[0];
+  document.getElementById("gapNote").textContent = gap.d===0
+    ? "5領域の送受信バランスはほぼ同じです。自分がする愛情表現を、相手からも受け取りやすいプロフィールです。"
+    : gap.d>0
+      ? `最大のギャップは「${gap.name}」です。自分からはよく送る一方、受け取るうえでの重要度は相対的に低めです。相手が同じ表現を返さなくても、愛情不足とは限りません。`
+      : `最大のギャップは「${gap.name}」です。受け取ると満たされやすい一方、自分からは同じ形で送りにくい傾向があります。必要な表現を具体的に伝えると、すれ違いを減らせます。`;
+
+  window.__loveioResult={r,s,rt,st,rs,ss,gap};
 }
 function resultText(){
   const x=window.__loveioResult;
   if(!x) return "";
-  return `LOVE I/O 診断\n受信TOP：${x.rt.name} ${x.rt.score}%\n送信TOP：${x.st.name} ${x.st.score}%\n受信サブ：${x.rs[0].name} ${x.rs[0].score}%\n送信サブ：${x.ss[0].name} ${x.ss[0].score}%\n\n愛情の「受け取り方」と「送り方」は、同じとは限らない。`;
+  return `LOVE I/O 診断\n受信TOP：${x.rt.name} ${x.rt.score}%\n送信TOP：${x.st.name} ${x.st.score}%\n受信サブ：${x.rs[0].name} ${x.rs[0].score}%\n送信サブ：${x.ss[0].name} ${x.ss[0].score}%\n最大ギャップ：${x.gap.name} ${x.gap.d>0?"+":""}${x.gap.d}pt（送信−受信）\n\n愛情の「受け取り方」と「送り方」は、同じとは限らない。`;
 }
 
 document.getElementById("showResults").addEventListener("click",()=>{
@@ -520,7 +1419,9 @@ document.getElementById("showResults").addEventListener("click",()=>{
   if(Object.keys(data).length!==totalChoices){
     const w=document.getElementById("warning");
     w.style.display="block";
-    w.scrollIntoView({behavior:"smooth",block:"center"});
+    const missing=allNames().find(name=>!(name in data));
+    const firstMissing=missing && form.querySelector(`input[name="${missing}"]`);
+    (firstMissing?.closest(".question")||w).scrollIntoView({behavior:"smooth",block:"center"});
     return;
   }
   document.getElementById("warning").style.display="none";
@@ -532,7 +1433,7 @@ document.getElementById("showResults").addEventListener("click",()=>{
 
 document.getElementById("resetBtn").addEventListener("click",()=>{
   if(!confirm("回答をすべてリセットしますか？")) return;
-  localStorage.removeItem("loveio_answers");
+  try{ localStorage.removeItem("loveio_answers"); }catch(e){}
   form.reset();
   document.getElementById("results").style.display="none";
   updateProgress();
@@ -556,7 +1457,8 @@ document.getElementById("backTop").addEventListener("click",()=>{
   form.scrollIntoView({behavior:"smooth"});
 });
 
-renderQuiz();
+restoreAnswers();
+updateProgress();
 </script>
 </body>
 </html>
