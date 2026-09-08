@@ -1,13 +1,562 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LOVE I/O</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#6f5bd3" />
+  <meta name="description" content="愛情の送り方と受け取り方を、5つの領域とサブタイプで可視化する自己理解ツール LOVE I/O。" />
+  <meta property="og:title" content="LOVE I/O｜愛情の送り方・受け取り方診断" />
+  <meta property="og:description" content="愛情の受信と送信は、同じとは限らない。5領域×サブタイプで自分の傾向を見てみよう。" />
+  <meta property="og:type" content="website" />
+  <title>LOVE I/O｜愛情の送り方・受け取り方診断</title>
+  <style>
+    :root{
+      --bg:#f6f4fb;
+      --card:#ffffff;
+      --text:#231f2d;
+      --muted:#736d7d;
+      --line:#e5dfec;
+      --accent:#6f5bd3;
+      --accent-soft:#eee9ff;
+      --receive:#6f5bd3;
+      --send:#d36f9b;
+      --good:#2f9b72;
+      --shadow:0 12px 30px rgba(46,35,66,.08);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+      background:linear-gradient(180deg,#f3effc 0,#f8f7fb 22%,#f8f7fb 100%);
+      color:var(--text);
+      line-height:1.65;
+      -webkit-font-smoothing:antialiased;
+    }
+    a{color:inherit}
+    button,input{font:inherit}
+    .wrap{max-width:920px;margin:0 auto;padding:18px 16px 80px}
+    .hero{
+      padding:44px 22px 30px;
+      text-align:center;
+    }
+    .badge{
+      display:inline-flex;align-items:center;gap:8px;
+      background:#fff;border:1px solid var(--line);border-radius:999px;
+      padding:7px 12px;font-size:13px;color:var(--muted);box-shadow:var(--shadow)
+    }
+    h1{font-size:clamp(36px,10vw,66px);line-height:1;margin:18px 0 10px;letter-spacing:-.04em}
+    .tagline{font-weight:800;font-size:clamp(19px,5vw,28px);margin:0 0 10px}
+    .lead{max-width:680px;margin:0 auto;color:var(--muted)}
+    .startbar{
+      position:sticky;top:0;z-index:20;
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      background:rgba(246,244,251,.86);
+      border-bottom:1px solid rgba(229,223,236,.85);
+      padding:10px 0;
+    }
+    .startbar-inner{max-width:920px;margin:0 auto;padding:0 16px;display:flex;gap:12px;align-items:center}
+    .progress-wrap{flex:1}
+    .progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:5px}
+    .progress{height:8px;background:#e7e1ef;border-radius:999px;overflow:hidden}
+    .progress > div{height:100%;width:0;background:linear-gradient(90deg,var(--receive),var(--send));transition:width .2s}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      padding:20px;box-shadow:var(--shadow);margin:16px 0;
+    }
+    .intro-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .mini{padding:16px;border:1px solid var(--line);border-radius:18px;background:#fbfaff}
+    .mini strong{display:block;margin-bottom:4px}
+    .receive-dot,.send-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+    .receive-dot{background:var(--receive)} .send-dot{background:var(--send)}
+    .scale{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+    .scale span{font-size:12px;background:#f5f2f8;border-radius:999px;padding:5px 9px;color:var(--muted)}
+    .privacy{font-size:13px;color:var(--muted);margin-top:12px}
+    .section-head{display:flex;gap:14px;align-items:flex-start;margin-bottom:8px}
+    .section-num{
+      width:38px;height:38px;border-radius:12px;background:var(--accent-soft);color:var(--accent);
+      display:grid;place-items:center;font-weight:900;flex:none
+    }
+    .section-head h2{margin:0;font-size:23px;line-height:1.2}
+    .section-head p{margin:5px 0 0;color:var(--muted);font-size:14px}
+    .question{
+      padding:16px 0;border-top:1px solid var(--line)
+    }
+    .question:first-of-type{border-top:0}
+    .qtext{font-weight:700;margin-bottom:12px}
+    .choice-row{
+      display:grid;grid-template-columns:64px 1fr;gap:8px;align-items:center;margin:9px 0
+    }
+    .choice-label{font-weight:800;font-size:13px}
+    .choice-label.receive{color:var(--receive)}
+    .choice-label.send{color:var(--send)}
+    .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+    .seg input{position:absolute;opacity:0;pointer-events:none}
+    .seg label{
+      display:grid;place-items:center;min-height:38px;border:1px solid var(--line);border-radius:12px;
+      background:#fff;font-weight:800;cursor:pointer;user-select:none;transition:.15s
+    }
+    .seg label:hover{transform:translateY(-1px)}
+    .seg input:focus-visible + label{outline:3px solid rgba(111,91,211,.25)}
+    .seg.receive input:checked + label{background:var(--receive);border-color:var(--receive);color:#fff}
+    .seg.send input:checked + label{background:var(--send);border-color:var(--send);color:#fff}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:24px 0}
+    .btn{
+      border:0;border-radius:15px;padding:13px 18px;font-weight:900;cursor:pointer;
+      background:var(--accent);color:#fff;box-shadow:0 8px 18px rgba(111,91,211,.22)
+    }
+    .btn.secondary{background:#fff;color:var(--text);border:1px solid var(--line);box-shadow:none}
+    .btn.share{background:#111}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+    .warn{
+      display:none;padding:12px 14px;background:#fff7e8;border:1px solid #efd7a8;border-radius:14px;
+      color:#72531d;margin:10px 0
+    }
+    #results{display:none}
+    .result-hero{
+      background:linear-gradient(135deg,#ffffff 0,#f6f0ff 55%,#fff1f6 100%);
+      border:1px solid var(--line);border-radius:28px;padding:24px;box-shadow:var(--shadow);margin-top:20px
+    }
+    .eyebrow{font-size:12px;letter-spacing:.12em;font-weight:900;color:var(--muted);text-transform:uppercase}
+    .result-title{font-size:clamp(24px,6vw,38px);line-height:1.25;margin:8px 0 10px}
+    .result-summary{color:var(--muted);margin:0}
+    .score-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .score-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px}
+    .score-card h3{margin:0 0 12px;font-size:17px}
+    .bar-row{margin:12px 0}
+    .bar-label{display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:5px}
+    .bar-bg{height:11px;background:#eeeaf1;border-radius:999px;overflow:hidden}
+    .bar{height:100%;border-radius:999px}
+    .bar.receive{background:var(--receive)} .bar.send{background:var(--send)}
+    .sub-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .sub-card{border:1px solid var(--line);border-radius:18px;padding:15px;background:#fff}
+    .sub-card h4{margin:0 0 8px;font-size:15px}
+    .pill{
+      display:inline-block;margin:4px 5px 0 0;border-radius:999px;padding:5px 9px;
+      font-size:12px;background:#f5f1fa;color:#544d5e
+    }
+    .gap-table{width:100%;border-collapse:collapse;font-size:14px}
+    .gap-table th,.gap-table td{padding:10px 7px;border-bottom:1px solid var(--line);text-align:left}
+    .gap-table th{color:var(--muted);font-size:12px}
+    .footnote{font-size:12px;color:var(--muted);margin-top:24px}
+    .hidden{display:none!important}
+    @media(max-width:640px){
+      .wrap{padding-left:12px;padding-right:12px}
+      .hero{padding:34px 10px 22px}
+      .intro-grid,.score-grid,.sub-grid{grid-template-columns:1fr}
+      .card{padding:17px}
+      .choice-row{grid-template-columns:56px 1fr}
+      .seg label{min-height:42px}
+      .actions .btn{width:100%}
+    }
+  </style>
 </head>
 <body>
-  <h1>LOVE I/O</h1>
-  <p>愛情の送り方・受け取り方診断</p>
-  <p>サイト準備中です。</p>
+  <header class="hero">
+    <span class="badge">β版・自己理解ツール</span>
+    <h1>LOVE I/O</h1>
+    <p class="tagline">愛情の「受け取り方」と「送り方」は、同じとは限らない。</p>
+    <p class="lead">5つの領域をさらに細分化し、あなたが何に愛を感じやすいか、何を愛情として自然に相手へ送るかを別々に可視化します。</p>
+  </header>
+
+  <div class="startbar">
+    <div class="startbar-inner">
+      <div class="progress-wrap">
+        <div class="progress-label"><span>回答進捗</span><span id="progressText">0 / 104</span></div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="intro-grid">
+        <div class="mini">
+          <strong><span class="receive-dot"></span>受信 R</strong>
+          「相手からこれをされると、自分は愛されていると感じるか」
+        </div>
+        <div class="mini">
+          <strong><span class="send-dot"></span>送信 S</strong>
+          「自分は愛情を伝えるために、自然とこれをするか」
+        </div>
+      </div>
+      <div class="scale">
+        <span>0 = ほぼない</span><span>1 = 少し</span><span>2 = かなり</span><span>3 = とても強い</span>
+      </div>
+      <p class="privacy">回答と結果は、このブラウザ内だけで計算されます。外部サーバーへ回答内容を送信する仕組みは入れていません。</p>
+    </section>
+
+    <form id="quizForm"></form>
+
+    <div id="warning" class="warn">未回答の項目があります。受信・送信の両方をすべて選んでください。</div>
+
+    <div class="actions">
+      <button class="btn" id="showResults" type="button">診断結果を見る</button>
+      <button class="btn secondary" id="resetBtn" type="button">回答をリセット</button>
+    </div>
+
+    <section id="results">
+      <div class="result-hero">
+        <div class="eyebrow">YOUR LOVE I/O PROFILE</div>
+        <h2 class="result-title" id="resultTitle"></h2>
+        <p class="result-summary" id="resultSummary"></p>
+      </div>
+
+      <section class="card">
+        <div class="section-head">
+          <div class="section-num">R/S</div>
+          <div><h2>5領域のスコア</h2><p>受信と送信を同じ尺度で比較します。</p></div>
+        </div>
+        <div class="score-grid">
+          <div class="score-card">
+            <h3><span class="receive-dot"></span>受信</h3>
+            <div id="receiveBars"></div>
+          </div>
+          <div class="score-card">
+            <h3><span class="send-dot"></span>送信</h3>
+            <div id="sendBars"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div class="section-num">SUB</div>
+          <div><h2>強いサブタイプ</h2><p>同じ領域の中でも、刺さるポイントは人によってかなり違います。</p></div>
+        </div>
+        <div class="sub-grid">
+          <div class="sub-card">
+            <h4><span class="receive-dot"></span>受信 TOP 5</h4>
+            <div id="receiveSubs"></div>
+          </div>
+          <div class="sub-card">
+            <h4><span class="send-dot"></span>送信 TOP 5</h4>
+            <div id="sendSubs"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-head">
+          <div class="section-num">↔</div>
+          <div><h2>送受信ギャップ</h2><p>「自分はよくするのに、されても重要ではない」「されると嬉しいのに、自分からはあまりしない」を見つけます。</p></div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="gap-table">
+            <thead><tr><th>領域</th><th>受信</th><th>送信</th><th>差</th></tr></thead>
+            <tbody id="gapRows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="actions">
+        <button class="btn share" id="shareX" type="button">Xで結果をシェア</button>
+        <button class="btn secondary" id="copyResult" type="button">結果文をコピー</button>
+        <button class="btn secondary" id="backTop" type="button">回答に戻る</button>
+      </div>
+
+      <p class="footnote">LOVE I/O は自己理解・対話のきっかけを目的とした独自の簡易診断です。心理検査・医学的評価ではなく、特定の既存診断の公式版でもありません。</p>
+    </section>
+  </main>
+
+<script>
+const categories = [
+  {
+    id:"words", name:"ことば", desc:"言葉による愛情・承認・安心",
+    items:[
+      ["w1","「好き」「愛してる」など直接的な愛情表現","直接的愛情表現"],
+      ["w2","「ありがとう」と具体的に感謝を伝える","感謝"],
+      ["w3","容姿・能力・性格などを褒める","称賛"],
+      ["w4","努力や頑張りを認める","努力承認"],
+      ["w5","落ち込んだとき励ます・応援する","励まし"],
+      ["w6","気持ちを理解していることを言葉にする","理解・共感"],
+      ["w7","「味方だよ」「大丈夫」など安心させる","安心"],
+      ["w8","「これからも一緒にいたい」など関係を言語化する","関係確認"],
+      ["w9","おはよう・おやすみ・気遣いなど日常的に声をかける","日常的な声かけ"]
+    ],
+    subs:[
+      ["直接的愛情表現",["w1"]],["感謝・承認",["w2","w4"]],["称賛",["w3"]],
+      ["励まし・安心",["w5","w7"]],["理解・共感",["w6"]],["関係確認",["w8"]],["日常的な声かけ",["w9"]]
+    ]
+  },
+  {
+    id:"qt", name:"共に過ごす時間", desc:"時間・空間・体験の共有",
+    items:[
+      ["q1","二人でじっくり会話する","対話"],
+      ["q2","自分の話をしっかり聞いてもらう／聞く","傾聴"],
+      ["q3","スマホなどを置いて相手だけに注意を向ける","集中した注意"],
+      ["q4","特に何もしなくても同じ空間で過ごす","共在"],
+      ["q5","一緒に食事をする","食事共有"],
+      ["q6","買い物・散歩・家事など日常を一緒に過ごす","日常共有"],
+      ["q7","ゲーム・映画・趣味など同じ活動をする","趣味共有"],
+      ["q8","旅行・イベント・外出など特別な体験を共有する","特別体験"],
+      ["q9","次の予定や将来のことを一緒に考える","未来共有"],
+      ["q10","定期的に「二人の時間」を確保する","継続的な時間共有"]
+    ],
+    subs:[
+      ["対話型",["q1","q2","q3"]],["共在型",["q4"]],["日常共有型",["q5","q6"]],
+      ["活動共有型",["q7","q8"]],["継続・未来共有型",["q9","q10"]]
+    ]
+  },
+  {
+    id:"gift", name:"贈り物・象徴", desc:"物や記号に込められた「思い出した」の証拠",
+    items:[
+      ["g1","誕生日・記念日にプレゼントをする","記念日"],
+      ["g2","何でもない日に小さな物を渡す","サプライズ"],
+      ["g3","出先で相手を思い出してお土産を買う","想起"],
+      ["g4","相手の好みを覚えていて、それに合う物を選ぶ","好み理解"],
+      ["g5","「これ好きって言ってたよね」と選ぶ","記憶"],
+      ["g6","手作りの物を渡す","手作り"],
+      ["g7","二人の思い出に関係する物を残す・贈る","象徴"],
+      ["g8","必要そうな実用品を買ってあげる","実用"],
+      ["g9","金額より「自分を思い出してくれたこと」に価値を感じる","想起の証拠"]
+    ],
+    subs:[
+      ["儀礼型",["g1"]],["サプライズ型",["g2"]],["想起型",["g3","g9"]],
+      ["理解型",["g4","g5"]],["象徴型",["g6","g7"]],["実用型",["g8"]]
+    ]
+  },
+  {
+    id:"service", name:"行動・サポート", desc:"相手の負担を減らす実務的な愛情",
+    items:[
+      ["s1","食事を作る","料理"],
+      ["s2","掃除・洗濯など家事をする","家事"],
+      ["s3","買い物や用事を代わりに済ませる","用事代行"],
+      ["s4","車で送迎する・迎えに行く","送迎"],
+      ["s5","面倒な手続きや調べ物を手伝う","調査・手続き"],
+      ["s6","壊れた物・困り事などを解決する","問題解決"],
+      ["s7","忙しいとき相手の負担を肩代わりする","負担軽減"],
+      ["s8","体調が悪いとき世話をする","ケア"],
+      ["s9","予定・旅行・生活の段取りをする","段取り"],
+      ["s10","頼まれる前に必要なことを察して行動する","先回り"],
+      ["s11","相手が楽になるよう環境を整える","環境整備"]
+    ],
+    subs:[
+      ["生活ケア型",["s1","s2","s3"]],["実務支援型",["s4","s5","s6"]],
+      ["負担軽減型",["s7"]],["ケア型",["s8"]],["段取り型",["s9"]],["先回り型",["s10","s11"]]
+    ]
+  },
+  {
+    id:"touch", name:"身体的な触れ合い", desc:"身体接触による安心・親密さ・性的なつながり",
+    items:[
+      ["t1","ハグする","ハグ"],
+      ["t2","手をつなぐ","手つなぎ"],
+      ["t3","キスする","キス"],
+      ["t4","肩・背中・腕などに軽く触れる","軽い接触"],
+      ["t5","隣で身体を寄せて座る","密着"],
+      ["t6","添い寝・一緒の布団で眠る","添い寝"],
+      ["t7","頭を撫でる・髪に触れる","撫でる"],
+      ["t8","マッサージなど長めの身体接触","長めの接触"],
+      ["t9","すれ違いざまなど日常的に軽く触れる","日常接触"],
+      ["t10","性的ではない濃密なスキンシップ","非性的な濃密接触"],
+      ["t11","性的な触れ合い","性的Touch"],
+      ["t12","セックス","セックス"],
+      ["t13","人前でも手をつなぐなどPDAをする","PDA"]
+    ],
+    subs:[
+      ["安心接触型",["t1","t4","t7"]],["親密接触型",["t2","t5","t6"]],
+      ["日常接触型",["t9"]],["長時間接触型",["t8","t10"]],["性的Touch型",["t11","t12"]],["PDA型",["t13"]]
+    ]
+  }
+];
+
+const form = document.getElementById("quizForm");
+const totalChoices = categories.reduce((n,c)=>n+c.items.length*2,0);
+
+function renderQuiz(){
+  form.innerHTML = categories.map((cat,ci)=>`
+    <section class="card" id="${cat.id}">
+      <div class="section-head">
+        <div class="section-num">${ci+1}</div>
+        <div><h2>${cat.name}</h2><p>${cat.desc}</p></div>
+      </div>
+      ${cat.items.map((it,ii)=>questionHTML(it,ii)).join("")}
+    </section>
+  `).join("");
+  restoreAnswers();
+  updateProgress();
+}
+
+function questionHTML(it,ii){
+  const [id,text] = it;
+  return `
+    <div class="question">
+      <div class="qtext">${ii+1}. ${text}</div>
+      ${choiceRow(id,"r","受信","receive")}
+      ${choiceRow(id,"s","送信","send")}
+    </div>
+  `;
+}
+function choiceRow(id,mode,label,cls){
+  return `
+    <div class="choice-row">
+      <div class="choice-label ${cls}">${label}</div>
+      <div class="seg ${cls}">
+        ${[0,1,2,3].map(v=>`
+          <input type="radio" id="${id}_${mode}_${v}" name="${id}_${mode}" value="${v}">
+          <label for="${id}_${mode}_${v}">${v}</label>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function allNames(){
+  const names=[];
+  categories.forEach(c=>c.items.forEach(([id])=>{names.push(id+"_r",id+"_s")}));
+  return names;
+}
+function answerMap(){
+  const out={};
+  allNames().forEach(name=>{
+    const el=form.querySelector(`input[name="${name}"]:checked`);
+    if(el) out[name]=Number(el.value);
+  });
+  return out;
+}
+function updateProgress(){
+  const count=Object.keys(answerMap()).length;
+  document.getElementById("progressText").textContent=`${count} / ${totalChoices}`;
+  document.getElementById("progressBar").style.width=`${(count/totalChoices)*100}%`;
+}
+form.addEventListener("change",()=>{
+  const data=answerMap();
+  localStorage.setItem("loveio_answers",JSON.stringify(data));
+  updateProgress();
+});
+
+function restoreAnswers(){
+  try{
+    const data=JSON.parse(localStorage.getItem("loveio_answers")||"{}");
+    Object.entries(data).forEach(([name,val])=>{
+      const el=form.querySelector(`input[name="${name}"][value="${val}"]`);
+      if(el) el.checked=true;
+    });
+  }catch(e){}
+}
+function pct(vals){
+  if(!vals.length) return 0;
+  return Math.round((vals.reduce((a,b)=>a+b,0)/(vals.length*3))*100);
+}
+function categoryScores(data,mode){
+  return categories.map(c=>{
+    const vals=c.items.map(([id])=>data[`${id}_${mode}`]);
+    return {id:c.id,name:c.name,score:pct(vals)};
+  });
+}
+function subtypeScores(data,mode){
+  const all=[];
+  categories.forEach(c=>{
+    c.subs.forEach(([name,ids])=>{
+      const vals=ids.map(id=>data[`${id}_${mode}`]);
+      all.push({category:c.name,name,score:pct(vals)});
+    });
+  });
+  return all.sort((a,b)=>b.score-a.score);
+}
+function top(arr){return [...arr].sort((a,b)=>b.score-a.score)[0]}
+
+const recvPhrase={
+  words:"言葉で愛情や理解を確認できると満たされやすい",
+  qt:"一緒にいる時間や共有体験そのものに愛を感じやすい",
+  gift:"「自分を思い出して選んだ」という象徴に愛を感じやすい",
+  service:"相手が自分のために動いてくれることに愛を感じやすい",
+  touch:"身体的な触れ合いから安心や親密さを受け取りやすい"
+};
+const sendPhrase={
+  words:"言葉にして愛情を伝える",
+  qt:"時間や体験を共有することで愛情を伝える",
+  gift:"相手を思って選んだ物や象徴で愛情を伝える",
+  service:"行動やサポートによって愛情を伝える",
+  touch:"触れ合いによって愛情を伝える"
+};
+
+function barsHTML(scores,cls){
+  return scores.sort((a,b)=>b.score-a.score).map(s=>`
+    <div class="bar-row">
+      <div class="bar-label"><span>${s.name}</span><strong>${s.score}%</strong></div>
+      <div class="bar-bg"><div class="bar ${cls}" style="width:${s.score}%"></div></div>
+    </div>
+  `).join("");
+}
+function renderResults(data){
+  const r=categoryScores(data,"r"), s=categoryScores(data,"s");
+  const rt=top(r), st=top(s);
+  const rs=subtypeScores(data,"r"), ss=subtypeScores(data,"s");
+
+  document.getElementById("resultTitle").textContent =
+    `受信は「${rt.name}」寄り、送信は「${st.name}」寄り`;
+  document.getElementById("resultSummary").textContent =
+    `あなたは、${recvPhrase[rt.id]}一方で、自分からは${sendPhrase[st.id]}傾向が強めです。細分類では受信「${rs[0].name}」、送信「${ss[0].name}」が特に高く出ています。`;
+
+  document.getElementById("receiveBars").innerHTML=barsHTML(r,"receive");
+  document.getElementById("sendBars").innerHTML=barsHTML(s,"send");
+
+  document.getElementById("receiveSubs").innerHTML=rs.slice(0,5).map(x=>
+    `<span class="pill">${x.name} ${x.score}%</span>`).join("");
+  document.getElementById("sendSubs").innerHTML=ss.slice(0,5).map(x=>
+    `<span class="pill">${x.name} ${x.score}%</span>`).join("");
+
+  const merged=r.map(x=>{
+    const sv=s.find(y=>y.id===x.id);
+    return {name:x.name,r:x.score,s:sv.score,d:sv.score-x.score};
+  }).sort((a,b)=>Math.abs(b.d)-Math.abs(a.d));
+
+  document.getElementById("gapRows").innerHTML=merged.map(x=>`
+    <tr><td>${x.name}</td><td>${x.r}%</td><td>${x.s}%</td><td>${x.d>0?"+":""}${x.d}</td></tr>
+  `).join("");
+
+  window.__loveioResult={r,s,rt,st,rs,ss};
+}
+function resultText(){
+  const x=window.__loveioResult;
+  if(!x) return "";
+  return `LOVE I/O 診断\n受信TOP：${x.rt.name} ${x.rt.score}%\n送信TOP：${x.st.name} ${x.st.score}%\n受信サブ：${x.rs[0].name} ${x.rs[0].score}%\n送信サブ：${x.ss[0].name} ${x.ss[0].score}%\n\n愛情の「受け取り方」と「送り方」は、同じとは限らない。`;
+}
+
+document.getElementById("showResults").addEventListener("click",()=>{
+  const data=answerMap();
+  if(Object.keys(data).length!==totalChoices){
+    const w=document.getElementById("warning");
+    w.style.display="block";
+    w.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  document.getElementById("warning").style.display="none";
+  renderResults(data);
+  const res=document.getElementById("results");
+  res.style.display="block";
+  res.scrollIntoView({behavior:"smooth"});
+});
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  if(!confirm("回答をすべてリセットしますか？")) return;
+  localStorage.removeItem("loveio_answers");
+  form.reset();
+  document.getElementById("results").style.display="none";
+  updateProgress();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+document.getElementById("copyResult").addEventListener("click",async()=>{
+  const text=resultText();
+  try{
+    await navigator.clipboard.writeText(text);
+    const b=document.getElementById("copyResult");
+    const old=b.textContent;b.textContent="コピーしました";
+    setTimeout(()=>b.textContent=old,1600);
+  }catch(e){ alert(text); }
+});
+document.getElementById("shareX").addEventListener("click",()=>{
+  const text=encodeURIComponent(resultText());
+  const url=encodeURIComponent(location.href);
+  window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`,"_blank","noopener");
+});
+document.getElementById("backTop").addEventListener("click",()=>{
+  form.scrollIntoView({behavior:"smooth"});
+});
+
+renderQuiz();
+</script>
 </body>
 </html>
