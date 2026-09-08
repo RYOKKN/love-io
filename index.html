@@ -1086,6 +1086,7 @@
   </main>
 
 <script>
+(()=>{
 const categories = [
   {
     id:"words", name:"ことば", desc:"言葉による愛情・承認・安心",
@@ -1266,12 +1267,12 @@ function subtypeScores(data,mode){
   categories.forEach(category=>category.subs.forEach(([name,ids])=>scores.push({category:category.name,name,score:pct(ids.map(id=>data[id+"_"+mode]))})));
   return scores.sort((a,b)=>b.score-a.score||a.name.localeCompare(b.name,"ja"));
 }
-function top(scores){return [...scores].sort((a,b)=>b.score-a.score)[0]}
+function pickTopScore(scores){return [...scores].sort((a,b)=>b.score-a.score)[0]}
 const receivePhrase={words:"言葉で愛情や理解を確認できると満たされやすい",qt:"一緒にいる時間や共有体験そのものに愛を感じやすい",gift:"『自分を思い出して選んだ』という象徴に愛を感じやすい",service:"相手が自分のために動いてくれることに愛を感じやすい",touch:"身体的な触れ合いから安心や親密さを受け取りやすい"};
 const sendPhrase={words:"言葉にして愛情を伝える",qt:"時間や体験を共有して愛情を伝える",gift:"相手を思って選んだ物や象徴で愛情を伝える",service:"行動やサポートで愛情を伝える",touch:"触れ合いによって愛情を伝える"};
 function barsHTML(scores,kind){return [...scores].sort((a,b)=>b.score-a.score).map(score=>'<div class="bar-row"><div class="bar-label"><span>'+score.name+'</span><strong>'+score.score+'%</strong></div><div class="bar-bg"><div class="bar '+kind+'" style="width:'+score.score+'%"></div></div></div>').join("")}
 function renderResults(data){
-  const r=categoryScores(data,"r"),s=categoryScores(data,"s"),rt=top(r),st=top(s),rs=subtypeScores(data,"r"),ss=subtypeScores(data,"s");
+  const r=categoryScores(data,"r"),s=categoryScores(data,"s"),rt=pickTopScore(r),st=pickTopScore(s),rs=subtypeScores(data,"r"),ss=subtypeScores(data,"s");
   document.getElementById("resultTitle").textContent='受信は「'+rt.name+'」寄り、送信は「'+st.name+'」寄り';
   document.getElementById("resultSummary").textContent='あなたは、'+receivePhrase[rt.id]+'傾向があります。一方、自分からは'+sendPhrase[st.id]+'傾向が強めです。細分類では、受信の「'+rs[0].name+'」と送信の「'+ss[0].name+'」が特に高く出ています。';
   document.getElementById("receiveBars").innerHTML=barsHTML(r,"receive");
@@ -1299,6 +1300,7 @@ if((storedStage==="transition"||storedStage==="send")&&!modeComplete("r"))stored
 if(storedStage==="results"&&modeComplete("r")&&modeComplete("s"))renderResults(answerMap());else if(storedStage==="results")storedStage=modeComplete("r")?"send":"receive";
 document.documentElement.classList.add("app-ready");
 showStage(storedStage,{scroll:false});
+})();
 </script>
 </body>
 </html>
